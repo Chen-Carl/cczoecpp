@@ -1,0 +1,8 @@
+name: frank
+sex: male
+age: 18
+skills: 
+  c++: 1
+  java: 2
+  android: 3
+  python: 4
