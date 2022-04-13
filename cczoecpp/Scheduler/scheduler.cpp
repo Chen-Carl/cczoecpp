@@ -2,6 +2,8 @@
 
 namespace cczoe {
 
+static thread_local Scheduler *t_scheduer = nullptr;
+
 Scheduler::ScheduleTask::ScheduleTask()
 {
     // unknown construction restrains the thread id to -1
@@ -23,7 +25,7 @@ Scheduler::ScheduleTask::ScheduleTask(std::function<void()> f, int thr)
 Scheduler::Scheduler(std::string name, size_t threadCount) : 
     m_name(name), m_threadCount(threadCount)
 {
-
+    t_scheduer = this;
 }
 
 Scheduler::~Scheduler()
@@ -44,7 +46,6 @@ void Scheduler::run()
 {
     fiber::Fiber::getThis();
     std::shared_ptr<fiber::Fiber> task;
-    thread::ScopedLock<MutexType> lock(m_mutex);
     std::shared_ptr<fiber::Fiber> idleFiber(new fiber::Fiber(std::bind(&Scheduler::idle, this)));
     while (true)
     {
@@ -60,8 +61,10 @@ void Scheduler::run()
         }
         if (!task)
         {
+            m_idleThreadCount++;
             idleFiber->setIdle();
             idleFiber->resume();
+            m_idleThreadCount--;
             continue;
         }
         task->resume();
@@ -89,6 +92,11 @@ void Scheduler::idle()
     {
         fiber::Fiber::getThis()->yield();
     }
+}
+
+Scheduler *Scheduler::GetThis()
+{
+    return t_scheduer;
 }
 
 }

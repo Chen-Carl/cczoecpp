@@ -5,6 +5,7 @@
 #include "Logger/logger.h"
 #include "LogEvent/logEvent.h"
 #include "LogFormatter/logFormatter.h"
+#include "Thread/Mutex/mutex.h"
 
 namespace cczoe {
 namespace logcpp {
@@ -15,6 +16,7 @@ protected:
     LogLevel::Level m_level = LogLevel::DEBUG;
     std::shared_ptr<LogFormatter> m_formatter;
     bool m_hasFormatter = false;
+    thread::Mutex m_mutex;
 
 public:
     LogAppender();

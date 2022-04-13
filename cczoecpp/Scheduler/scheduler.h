@@ -1,4 +1,5 @@
 #include <list>
+#include <atomic>
 #include "Thread/thread.h"
 #include "Thread/Mutex/mutex.h"
 #include "Fiber/fiber.h"
@@ -25,11 +26,12 @@ private:
     };
 
 public:
-    Scheduler(std::string name = "", size_t threadCount = 1);
+    Scheduler(std::string name = "default_sch", size_t threadCount = 1);
     virtual ~Scheduler();
-    void start();
-    void run();
-    void stop();
+
+    virtual void start();
+    virtual void run();
+    virtual void stop();
 
     template <class Task>
     void schedule(Task task)
@@ -54,13 +56,20 @@ private:
     MutexType m_mutex;
     // threads pool
     std::vector<std::shared_ptr<thread::Thread>> m_threads;
+
+    virtual void idle();
+
+protected:
+    // name
+    std::string m_name;
+    // working thread
+    size_t m_threadCount = 0;
     // stop command
     bool m_stopCommand = false;
+    // idle thread
+    std::atomic<size_t> m_idleThreadCount = {0};
 
-    std::string m_name;
-    size_t m_threadCount = 0;
-
-    void idle();
+    static Scheduler *GetThis();
 };
 
 }

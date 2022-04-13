@@ -10,6 +10,7 @@ LogAppender::LogAppender() :
 
 void LogAppender::setFormatter(std::shared_ptr<LogFormatter> fmtter)
 {
+    thread::ScopedLock<thread::Mutex> lock(m_mutex);
     m_formatter = fmtter;
     if (m_formatter)
         m_hasFormatter = true;
@@ -24,6 +25,7 @@ StdoutLogAppender::StdoutLogAppender(std::shared_ptr<LogFormatter> fmtter)
 
 void StdoutLogAppender::log(std::shared_ptr<Logger> logger, LogLevel::Level level, std::shared_ptr<LogEvent> event)
 {
+    thread::ScopedLock<thread::Mutex> lock(m_mutex);
     if (m_hasFormatter && level >= m_level)
     {
         std::cout << m_formatter->format(event);
@@ -39,6 +41,7 @@ void StdoutLogAppender::log(std::shared_ptr<Logger> logger, LogLevel::Level leve
 
 bool FileLogAppender::reopen()
 {
+    thread::ScopedLock<thread::Mutex> lock(m_mutex);
     if (m_filestream)
     {
         m_filestream.close();
@@ -55,6 +58,7 @@ FileLogAppender::FileLogAppender(const std::string &filename) :
 
 void FileLogAppender::log(std::shared_ptr<Logger> logger, LogLevel::Level level, std::shared_ptr<LogEvent> event)
 {
+    thread::ScopedLock<thread::Mutex> lock(m_mutex);
     if (m_hasFormatter && level >= m_level)
     {
         m_filestream << m_formatter->format(event);

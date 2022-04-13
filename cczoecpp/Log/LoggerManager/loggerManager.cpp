@@ -13,6 +13,7 @@ LoggerManager::LoggerManager()
 
 std::shared_ptr<Logger> LoggerManager::getLogger(const std::string &name)
 {
+    thread::ScopedLock<thread::Mutex> lock(m_mutex);
     auto it = m_loggers.find(name);
     if (it != m_loggers.end())
         return it->second;

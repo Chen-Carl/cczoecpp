@@ -61,11 +61,13 @@ Logger::Logger(const std::string &name) :
 
 void Logger::addAppender(std::shared_ptr<LogAppender> appender)
 {
+    thread::ScopedLock<thread::Mutex> lock(m_mutex);
     m_appenders.push_back(appender);
 }
 
 void Logger::delAppender(std::shared_ptr<LogAppender> appender)
 {
+    thread::ScopedLock<thread::Mutex> lock(m_mutex);
     for (auto it = m_appenders.begin(); it != m_appenders.end(); it++)
     {
         if (*it == appender)
@@ -78,6 +80,7 @@ void Logger::delAppender(std::shared_ptr<LogAppender> appender)
 
 void Logger::clearAppender()
 {
+    thread::ScopedLock<thread::Mutex> lock(m_mutex);
     m_appenders.clear();
 }
 

@@ -62,6 +62,7 @@ private:
     bool m_locked;
     T m_mutex;
 
+public:
     void lock()
     {
         if (!m_locked)
@@ -80,7 +81,6 @@ private:
         }
     }
 
-public:
     ScopedLock() = delete;
     ScopedLock(T &mutex) : m_mutex(mutex)
     {
@@ -89,6 +89,80 @@ public:
     }
 
     ~ScopedLock()
+    {
+        unlock();
+    }
+};
+
+template <class T = RWMutex>
+class ReadScopedLock
+{
+private:
+    T &m_mutex;
+    bool m_locked = false;
+
+public:
+    void rdlock()
+    {
+        if (!m_locked)
+        {
+            m_mutex.rdlock();
+            m_locked = true;
+        }
+    }
+
+    void unlock()
+    {
+        if (m_locked)
+        {
+            m_mutex.unlock();
+            m_locked = false;
+        }
+    }
+
+    ReadScopedLock(T &mutex) : m_mutex(mutex)
+    {
+        rdlock();
+    }
+
+    ~ReadScopedLock()
+    {
+        unlock();
+    }
+};
+
+template <class T = RWMutex>
+class WriteScopedLock
+{
+private:
+    T &m_mutex;
+    bool m_locked = false;
+
+public:
+    void wrlock()
+    {
+        if (!m_locked)
+        {
+            m_mutex.wrlock();
+            m_locked = true;
+        }
+    }
+
+    void unlock()
+    {
+        if (m_locked)
+        {
+            m_mutex.unlock();
+            m_locked = false;
+        }
+    }
+
+    WriteScopedLock(T &mutex) : m_mutex(mutex)
+    {
+        wrlock();
+    }
+
+    ~WriteScopedLock()
     {
         unlock();
     }

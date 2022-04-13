@@ -5,6 +5,7 @@
 #include <memory>
 #include "Logger/logger.h"
 #include "singleton.h"
+#include "Thread/Mutex/mutex.h"
 
 
 namespace cczoe {
@@ -14,6 +15,7 @@ class LoggerManager
 private:
     std::map<std::string, std::shared_ptr<Logger>> m_loggers;
     std::shared_ptr<Logger> m_root;
+    thread::Mutex m_mutex;
 
 public:
     LoggerManager();

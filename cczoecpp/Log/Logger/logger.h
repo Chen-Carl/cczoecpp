@@ -4,6 +4,7 @@
 #include <list>
 #include <string>
 #include <memory>
+#include "Thread/Mutex/mutex.h"
 
 namespace cczoe {
 namespace logcpp {
@@ -38,6 +39,7 @@ private:
     std::list<std::shared_ptr<LogAppender>> m_appenders;
     std::shared_ptr<LogFormatter> m_formatter;
     std::shared_ptr<Logger> m_root;
+    thread::Mutex m_mutex;
 
 public:
     Logger(const std::string &name = "root");

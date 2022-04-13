@@ -27,6 +27,7 @@ set(LIB_SRC
     cczoecpp/Thread/thread.cpp
     cczoecpp/Fiber/fiber.cpp
     cczoecpp/Scheduler/scheduler.cpp
+    cczoecpp/Net/ByteArray/bytearray.cpp
     cczoecpp/utils/getInfo.cpp
     cczoecpp/utils/debug.cpp
 )
@@ -67,6 +68,10 @@ target_link_libraries(testFiber ${LIBS})
 add_executable(testScheduler tests/testScheduler.cpp)
 add_dependencies(testScheduler cczoecpp)
 target_link_libraries(testScheduler ${LIBS})
+
+add_executable(testByteArray tests/testByteArray.cpp)
+add_dependencies(testByteArray cczoecpp)
+target_link_libraries(testByteArray ${LIBS})
 
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
