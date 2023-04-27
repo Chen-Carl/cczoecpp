@@ -1,3 +1,4 @@
+#include <format>
 #include <sys/fcntl.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -66,7 +67,14 @@ IOManager::IOManager(std::string name, size_t threadCount) :
 
 IOManager::~IOManager()
 {
-    stop();
+    while (!m_stopCommand)
+    {
+        sleep(5);
+    }
+    for (size_t i = 0; i < m_threadCount; i++)
+    {
+        tickle();
+    }
     // close handler
     close(m_epfd);
     close(m_tickleFds[0]);
@@ -120,7 +128,9 @@ int IOManager::addEvent(int fd, Event event, std::function<void()> cb)
     // update fdContexts record
     fdCtx->events = (Event)(fdCtx->events | event);
     FdContext::EventContext &eventCtx = fdCtx->getEventContext(event);
-    CCZOE_ASSERT(!eventCtx.scheduler && !eventCtx.fiber && !eventCtx.cb);
+    // CCZOE_ASSERT(!eventCtx.scheduler);
+    // CCZOE_ASSERT(!eventCtx.fiber);
+    // CCZOE_ASSERT(!eventCtx.cb);
     eventCtx.scheduler = Scheduler::GetThis();
     if (cb)
     {
@@ -129,7 +139,7 @@ int IOManager::addEvent(int fd, Event event, std::function<void()> cb)
     // if cb is nullptr, set the current fiber as a callback function
     else
     {
-        eventCtx.fiber = fiber::Fiber::getThis();
+        eventCtx.fiber = fiber::Fiber::GetThis();
         CCZOE_ASSERT(eventCtx.fiber->getState() == fiber::Fiber::RUNNING);
     }
     return 0;
@@ -276,15 +286,34 @@ void IOManager::idle()
     });
 
     int rt = 0;
-    while (!m_stopCommand)
+    while (!m_stopCommand || hasTimer())
     {
-        CCZOE_LOG_INFO(CCZOE_LOG_ROOT()) << "Enter idle loop...";
+        static const uint64_t maxTimeout = 3000;
+        uint64_t nextTimeout = getNextTimer();
+        if (nextTimeout == ~0ull)
+        {
+            nextTimeout = std::min(maxTimeout, nextTimeout);
+        }
+        else
+        {
+            nextTimeout = maxTimeout;
+        }
         // epoll_wait registed fd
         while (1)
         {
-            rt = epoll_wait(m_epfd, events, 64, 5000);
+            rt = epoll_wait(m_epfd, events, 64, nextTimeout);
             if (!(rt < 0 && errno == EINTR))
                 break;
+        }
+
+        std::vector<std::function<void()>> cbs = getExpiredCb();
+        if (!cbs.empty())
+        {
+            for (auto it = cbs.begin(); it != cbs.end(); it++)
+            {
+                schedule(*it);
+            }
+            cbs.clear();
         }
 
         // epoll_wait timeout
@@ -350,22 +379,26 @@ void IOManager::idle()
 
         // all events processed, returning to Scheduler::run()
         // it will check the task queue and process the task
-        std::shared_ptr<fiber::Fiber> curr = fiber::Fiber::getThis();
+        std::shared_ptr<fiber::Fiber> curr = fiber::Fiber::GetThis();
         auto rawPtr = curr.get();
         curr.reset();
         rawPtr->yield();
     }
 }
 
-void IOManager::stop()
+bool IOManager::hasTimer()
 {
-    for (size_t i = 0; i < m_threadCount; i++)
-    {
-        tickle();
-    }
-
-    Scheduler::stop();
+    return !empty();
 }
 
+void IOManager::onTimerInsertedAtFront()
+{
+    tickle();
+}
+
+IOManager *IOManager::GetThis()
+{
+    return dynamic_cast<IOManager *>(Scheduler::GetThis());
+}
 
 };

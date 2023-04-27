@@ -1,5 +1,5 @@
-#ifndef __ZOE_LOGGER_H__
-#define __ZOE_LOGGER_H__
+#ifndef __CCZOE_LOGGER_H__
+#define __CCZOE_LOGGER_H__
 
 #include <list>
 #include <string>

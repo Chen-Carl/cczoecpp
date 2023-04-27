@@ -1,6 +1,7 @@
-#ifndef __ZOE_CONFIG_H__
-#define __ZOE_CONFIG_H__
+#ifndef __CCZOE_CONFIG_H__
+#define __CCZOE_CONFIG_H__
 
+#include <format>
 #include <string>
 #include <unordered_map>
 #include <memory>
@@ -74,7 +75,7 @@ public:
         }
         catch(std::exception& e)
         {
-            CCZOE_LOG_ERROR(CCZOE_LOG_ROOT()) << "ConfigVar::toString() exception " << e.what() << " convert: string to " << typeid(m_val).name() << " with string parameter: " << str;
+            CCZOE_LOG_ERROR(CCZOE_LOG_ROOT()) << std::format("ConfigVar::toString() exception {} convert: string to {} with string parameter: {}", e.what(), typeid(m_val).name(), str);
             return false;
         }
         return true;
@@ -88,7 +89,7 @@ public:
         }
         catch(const std::exception& e)
         {
-            CCZOE_LOG_ERROR(CCZOE_LOG_ROOT()) << "ConfigVar::toString() exception " << e.what() << " convert: " << typeid(m_val).name() << " to string";
+            CCZOE_LOG_ERROR(CCZOE_LOG_ROOT()) << std::format("ConfigVar::toString() exception {} convert: {} to string", e.what(), typeid(m_val).name());
         }
         return "";
     }
@@ -135,20 +136,20 @@ public:
             auto tmp = std::dynamic_pointer_cast<ConfigVar<T>>(it->second);
             if (tmp)
             {
-                CCZOE_LOG_INFO(CCZOE_LOG_ROOT()) << "config variable named \"" << name << "\" exists";
+                CCZOE_LOG_INFO(CCZOE_LOG_ROOT()) << std::format("config variable named \"{}\" exists", name);
                 return tmp;
             }
             // tmp may be a null pointer
             else
             {
-                CCZOE_LOG_INFO(CCZOE_LOG_ROOT()) << "config variable named \"" << name << "\" exists, which type is not \"" << typeid(T).name() << "\" but \"" << it->second->getTypeName() << "\"";
+                CCZOE_LOG_INFO(CCZOE_LOG_ROOT()) << std::format("config variable named \"{}\" exists, which type is not \"{}\" but \"{}\"", name, typeid(T).name(), it->second->getTypeName());
                 return nullptr;
             }
         }
         // create a new config variable
         else
         {
-            std::shared_ptr<ConfigVar<T>> createVar(new ConfigVar<T>(name, default_value, description));
+            std::shared_ptr<ConfigVar<T>> createVar = std::make_shared<ConfigVar<T>>(name, default_value, description);
             getDatas()[name] = createVar;
             return createVar;
         }

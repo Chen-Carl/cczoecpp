@@ -1,5 +1,5 @@
-#ifndef __ZOE_MUTEX_H__
-#define __ZOE_MUTEX_H__
+#ifndef __CCZOE_MUTEX_H__
+#define __CCZOE_MUTEX_H__
 
 #include <pthread.h>
 #include <atomic>
@@ -60,7 +60,7 @@ class ScopedLock
 {
 private:
     bool m_locked;
-    T m_mutex;
+    T &m_mutex;
 
 public:
     void lock()

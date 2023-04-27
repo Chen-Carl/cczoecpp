@@ -1,5 +1,5 @@
-#ifndef __ZOE_LEXICALCAST_H__
-#define __ZOE_LEXICALCAST_H__
+#ifndef __CCZOE_LEXICALCAST_H__
+#define __CCZOE_LEXICALCAST_H__
 
 #include <string>
 #include <vector>

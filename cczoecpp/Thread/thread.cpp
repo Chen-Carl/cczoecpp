@@ -1,6 +1,6 @@
-#include "thread.h"
-#include "Log/log.h"
+#include "Thread/thread.h"
 #include "utils/getInfo.h"
+#include "Log/log.h"
 
 namespace cczoe {
 namespace thread {
@@ -8,22 +8,6 @@ namespace thread {
 static std::shared_ptr<logcpp::Logger> g_logger = CCZOE_LOG_NAME("system");
 static thread_local Thread *t_thread = nullptr;
 static thread_local std::string t_thread_name = "default name";
-
-Thread::Thread(std::function<void()> callback, const std::string &name) :
-    m_callback(callback), m_name(name)
-{
-    if (name.empty())
-    {
-        m_name = "default name";
-    }
-    // when calling constructor, create a new thread
-    // callback() invoked in run()
-    int rt = pthread_create(&m_thread, nullptr, &Thread::run, this);
-    if (rt)
-    {
-        CCZOE_LOG_ERROR(g_logger) << "pthread_craete fail, rt = " << rt << ", name = " << m_name;
-    }
-}
 
 Thread::~Thread()
 {

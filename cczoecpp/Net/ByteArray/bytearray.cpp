@@ -24,10 +24,9 @@ ByteArray::Node::~Node()
 {
     if (ptr)
     {
-        delete ptr;
+        delete [] ptr;
     }
 }
-
 
 ByteArray::ByteArray(size_t baseSize) : 
     m_baseSize(baseSize),
@@ -67,7 +66,7 @@ void ByteArray::writeFint16(int16_t value)
 {
     if (m_endian != CCZOE_BYTE_ORDER)
     {
-        value = byteSwap(value);
+        value = byteswap(value);
     }
     write(&value, sizeof(value));
 }
@@ -76,7 +75,7 @@ void ByteArray::writeFuint16(uint16_t value)
 {
     if (m_endian != CCZOE_BYTE_ORDER)
     {
-        value = byteSwap(value);
+        value = byteswap(value);
     }
     write(&value, sizeof(value));
 }
@@ -85,7 +84,7 @@ void ByteArray::writeFint32(int32_t value)
 {
     if (m_endian != CCZOE_BYTE_ORDER)
     {
-        value = byteSwap(value);
+        value = byteswap(value);
     }
     write(&value, sizeof(value));
 }
@@ -94,7 +93,7 @@ void ByteArray::writeFuint32(uint32_t value)
 {
     if (m_endian != CCZOE_BYTE_ORDER)
     {
-        value = byteSwap(value);
+        value = byteswap(value);
     }
     write(&value, sizeof(value));
 }
@@ -103,7 +102,7 @@ void ByteArray::writeFint64(int64_t value)
 {
     if (m_endian != CCZOE_BYTE_ORDER)
     {
-        value = byteSwap(value);
+        value = byteswap(value);
     }
     write(&value, sizeof(value));
 }
@@ -112,7 +111,7 @@ void ByteArray::writeFuint64(uint64_t value)
 {
     if (m_endian != CCZOE_BYTE_ORDER)
     {
-        value = byteSwap(value);
+        value = byteswap(value);
     }
     write(&value, sizeof(value));
 }
@@ -216,7 +215,7 @@ uint8_t ByteArray::readFuint8()
     { \
         return v; \
     } \
-    return byteSwap(v)
+    return byteswap(v)
 
 int16_t ByteArray::readFint16()
 {
@@ -583,6 +582,78 @@ void ByteArray::addCapacity(size_t size)
     {
         m_curr = first;
     }
+}
+
+uint64_t ByteArray::addWriteBuffers(std::vector<iovec> &buff, uint64_t len)
+{
+    if (len <= 0)
+    {
+        return 0;
+    }
+    addCapacity(len);
+    uint64_t size = len;
+    size_t npos = m_position % m_baseSize;
+    size_t ncap = m_curr->size - npos;
+    Node *curr = m_curr;
+    while (len > 0)
+    {
+        iovec iov;
+        if (ncap > len)
+        {
+            iov.iov_base = curr->ptr + npos;
+            iov.iov_len = len;
+            m_size += len;
+            len = 0;
+        }
+        else
+        {
+            iov.iov_base = curr->ptr + npos;
+            iov.iov_len = ncap;
+            m_size += ncap;
+            len -= ncap;
+            curr = curr->next;
+            ncap = curr->size;
+            npos = 0;
+        }
+        buff.push_back(iov);
+    }
+    return size;
+}
+
+uint64_t ByteArray::addReadBuffers(std::vector<iovec> &buff, uint64_t len) const
+{
+    len = len > getReadableSize() ? getReadableSize() : len;
+    if (len == 0)
+    {
+        return 0;
+    }
+
+    uint64_t size = len;
+    size_t npos = m_position % m_baseSize;
+    size_t ncap = m_curr->size - npos;
+    Node *curr = m_curr;
+    iovec iov;
+
+    while (len > 0)
+    {
+        if (ncap >= len)
+        {
+            iov.iov_base = curr->ptr + npos;
+            iov.iov_len = len;
+            len = 0;
+        }
+        else
+        {
+            iov.iov_base = curr->ptr + npos;
+            iov.iov_len = ncap;
+            len -= ncap;
+            curr = curr->next;
+            ncap = curr->size;
+            npos = 0;
+        }
+        buff.push_back(iov);
+    }
+    return size;
 }
 
 // zigzag encoding

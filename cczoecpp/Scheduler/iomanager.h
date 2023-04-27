@@ -4,10 +4,11 @@
 #include <sys/epoll.h>
 #include "Thread/Mutex/mutex.h"
 #include "scheduler.h"
+#include "Timer/timerManager.h"
 
 namespace cczoe {
 
-class IOManager : public Scheduler
+class IOManager : public Scheduler, public TimerManager
 {
     using MutexType = thread::Mutex;
     using RWMutexType = thread::RWMutex;
@@ -19,7 +20,6 @@ public:
         WRITE = 0x4         // EPOLLOUT
     };
 
-private:
     /**
      * @brief schedule task descriptor - (fd, type, callback)
      * @param fd descriptor
@@ -53,7 +53,7 @@ private:
 
 public:
     IOManager(std::string name = "default_iom", size_t threadCount = 1);
-    ~IOManager();
+    virtual ~IOManager();
 
     /** 
      * @brief add an event to fd
@@ -73,7 +73,11 @@ public:
 
     void tickle();
     virtual void idle() override;
-    virtual void stop() override;
+
+    bool hasTimer();
+    void onTimerInsertedAtFront() override;
+
+    static IOManager *GetThis();
 
 private:
     int m_epfd = 0;             // epoll descriptor

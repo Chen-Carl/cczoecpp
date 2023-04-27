@@ -1,4 +1,4 @@
-# chapter 07 网络模块：sockaddr
+# chapter 07 网络模块：Address
 
 ## 7.1 套接字地址结构
 
@@ -54,7 +54,7 @@ struct in_addr
 };
 ```
 
-#### 3. IPv4套接字地址sockaddr_in6
+#### 3. IPv6套接字地址sockaddr_in6
 
 ``` cpp
 struct sockaddr_in6

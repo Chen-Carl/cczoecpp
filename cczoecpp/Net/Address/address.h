@@ -15,18 +15,18 @@ public:
     Address() { }
     virtual ~Address() { }
 
-    virtual int getFamily() const;
     virtual const sockaddr* getAddr() const = 0;
     virtual socklen_t getAddrLen() const = 0;
+    virtual int getFamily() const;
+    virtual sockaddr* getAddr() = 0;
+    
+    virtual std::ostream& insert(std::ostream &os) const = 0;
 
     virtual std::string toString() const;
 
     bool operator<(const Address &rhs) const;
     bool operator==(const Address &rhs) const;
     bool operator!=(const Address &rhs) const;
-
-private:
-    virtual std::ostream& toString(std::ostream &os) const = 0;
 };
 
 }}

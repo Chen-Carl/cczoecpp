@@ -33,6 +33,7 @@ void testYamlType()
     std::cout << "------ test2: test yaml type ------" << std::endl;
     char *buffer = getcwd(NULL, 0);
     std::cout << "current pwd: " << buffer << std::endl;
+    free(buffer);
     YAML::Node node = YAML::LoadFile("../tests/testYaml.yml");
     // std::cout << node << std::endl;
     std::cout << "name: " << node["name"].as<std::string>() << std::endl;

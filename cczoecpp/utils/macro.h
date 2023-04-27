@@ -1,5 +1,5 @@
-#ifndef __ZOE_MACRO_H__
-#define __ZOE_MACRO_H__
+#ifndef __CCZOE_MACRO_H__
+#define __CCZOE_MACRO_H__
 
 #include <assert.h>
 #include "debug.h"

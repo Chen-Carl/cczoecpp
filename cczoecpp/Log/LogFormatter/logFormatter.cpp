@@ -63,43 +63,43 @@ void LogFormatter::init()
                     {
                         // fetch the content between '{' and '}'
                         dateFmt = m_pattern.substr(i + 3, end - i - 3);
-                        m_items.push_back(std::shared_ptr<DateTimeFormatItem>(new DateTimeFormatItem(dateFmt)));
+                        m_items.push_back(std::make_shared<DateTimeFormatItem>(dateFmt));
                         dateFmt.clear();
                         i = end - 1;
                         break;
                     }
                 }
-                m_items.push_back(std::shared_ptr<DateTimeFormatItem>(new DateTimeFormatItem()));
+                m_items.push_back(std::make_shared<DateTimeFormatItem>());
                 break;
             case 'T':
-                m_items.push_back(std::shared_ptr<TabFormatItem>(new TabFormatItem()));
+                m_items.push_back(std::make_shared<TabFormatItem>());
                 break;
             case 't':
-                m_items.push_back(std::shared_ptr<ThreadIdFormatItem>(new ThreadIdFormatItem()));
+                m_items.push_back(std::make_shared<ThreadIdFormatItem>());
                 break;
             case 'N':
-                m_items.push_back(std::shared_ptr<ThreadNameFormatItem>(new ThreadNameFormatItem()));
+                m_items.push_back(std::make_shared<ThreadNameFormatItem>());
                 break;
             case 'F':
-                m_items.push_back(std::shared_ptr<FiberIdFormatItem>(new FiberIdFormatItem()));
+                m_items.push_back(std::make_shared<FiberIdFormatItem>());
                 break;
             case 'p':
-                m_items.push_back(std::shared_ptr<LevelFormatItem>(new LevelFormatItem()));
+                m_items.push_back(std::make_shared<LevelFormatItem>());
                 break;
             case 'c':
-                m_items.push_back(std::shared_ptr<NameFormatItem>(new NameFormatItem()));
+                m_items.push_back(std::make_shared<NameFormatItem>());
                 break;
             case 'f':
-                m_items.push_back(std::shared_ptr<FilenameFormatItem>(new FilenameFormatItem()));
+                m_items.push_back(std::make_shared<FilenameFormatItem>());
                 break;
             case 'l':
-                m_items.push_back(std::shared_ptr<LineFormatItem>(new LineFormatItem()));
+                m_items.push_back(std::make_shared<LineFormatItem>());
                 break;
             case 'm':
-                m_items.push_back(std::shared_ptr<MessageFormatItem>(new MessageFormatItem()));
+                m_items.push_back(std::make_shared<MessageFormatItem>());
                 break;
             case 'n':
-                m_items.push_back(std::shared_ptr<NewLineFormatItem>(new NewLineFormatItem()));
+                m_items.push_back(std::make_shared<NewLineFormatItem>());
                 break;
             default:
                 break;
@@ -115,7 +115,7 @@ void LogFormatter::init()
                 str.push_back(m_pattern[i]);
             }
             // now m_pattern[i + 1] == '%'
-            m_items.push_back(std::shared_ptr<StringFormatItem>(new StringFormatItem(str)));
+            m_items.push_back(std::make_shared<StringFormatItem>(str));
             str.clear();
             i++;
         }

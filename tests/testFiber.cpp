@@ -24,7 +24,7 @@ void testFiber()
 
     for (int i = 0; i < 2; i++)
     {
-        thrs.push_back(std::shared_ptr<thread::Thread>(new thread::Thread(&func, "name_" + std::to_string(i))));
+        thrs.push_back(std::make_shared<thread::Thread>("name_" + std::to_string(i), func));
     }
     for (auto &x : thrs)
     {
@@ -35,9 +35,9 @@ void testFiber()
 void fiberFunc()
 {
     CCZOE_LOG_INFO(CCZOE_LOG_ROOT()) << "subfiber function before yield";
-    fiber::Fiber::yieldToReady();
+    fiber::Fiber::YieldToReady();
     CCZOE_LOG_INFO(CCZOE_LOG_ROOT()) << "subfiber function after yield";
-    fiber::Fiber::yieldToReady();
+    fiber::Fiber::YieldToReady();
     CCZOE_LOG_INFO(CCZOE_LOG_ROOT()) << "subfiber function end";
 }
 
@@ -47,7 +47,7 @@ void func()
     // That's because logs contain the Fiber id, where getFiberId() is applied.
     CCZOE_LOG_INFO(CCZOE_LOG_ROOT()) << "fiber function begin";
     {
-        std::shared_ptr<fiber::Fiber> fiber(new fiber::Fiber(&fiberFunc));
+        std::shared_ptr<fiber::Fiber> fiber = std::make_shared<fiber::Fiber>(fiberFunc);
         CCZOE_LOG_INFO(CCZOE_LOG_ROOT()) << "main thread fiber output 1";
         fiber->resume();
         CCZOE_LOG_INFO(CCZOE_LOG_ROOT()) << "main thread fiber output 2";

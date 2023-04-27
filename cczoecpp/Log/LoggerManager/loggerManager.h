@@ -1,5 +1,5 @@
-#ifndef __ZOE_LOGGERMANAGER_H__
-#define __ZOE_LOGGERMANAGER_H__
+#ifndef __CCZOE_LOGGERMANAGER_H__
+#define __CCZOE_LOGGERMANAGER_H__
 
 #include <map>
 #include <memory>

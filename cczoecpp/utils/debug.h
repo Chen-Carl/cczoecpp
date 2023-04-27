@@ -1,5 +1,5 @@
-#ifndef __ZOE_DEBUG_H__
-#define __ZOE_DEBUG_H__
+#ifndef __CCZOE_DEBUG_H__
+#define __CCZOE_DEBUG_H__
 
 #include <vector>
 #include <string>

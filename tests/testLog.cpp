@@ -20,11 +20,11 @@ void testBasicLogic()
 {
     std::cout << "------ test1: test basic logic ------" << std::endl;
     LogLevel::Level debug = LogLevel::DEBUG;
-    std::shared_ptr<Logger> logger(new Logger());
-    std::shared_ptr<LogEvent> event(new LogEvent("", "", 0, 0, 0, 0, 0, logger, debug));
-    std::shared_ptr<LogAppender> stdAppender(new StdoutLogAppender);
-    std::shared_ptr<LogAppender> fileAppender(new FileLogAppender("../tests/testLogs/fileout.txt"));
-    std::shared_ptr<LogFormatter> fmtter(new LogFormatter("[%d{%H:%M:%S}]%T%M%T%F%n"));
+    std::shared_ptr<Logger> logger = std::make_shared<Logger>();
+    std::shared_ptr<LogEvent> event = std::make_shared<LogEvent>("", "", 0, 0, 0, 0, 0, logger, debug);
+    std::shared_ptr<LogAppender> stdAppender = std::make_shared<StdoutLogAppender>();
+    std::shared_ptr<LogAppender> fileAppender = std::make_shared<FileLogAppender>("../tests/testLogs/fileout.txt");
+    std::shared_ptr<LogFormatter> fmtter = std::make_shared<LogFormatter>("[%d{%H:%M:%S}]%T%M%T%F%n");
     stdAppender->setFormatter(fmtter);
     fileAppender->setFormatter(fmtter);
     logger->addAppender(stdAppender);
@@ -32,7 +32,7 @@ void testBasicLogic()
     // test logger->log
     logger->log(debug, event);
     // test ~LogEventWrap()
-    std::shared_ptr<LogEventWrap> wrapper(new LogEventWrap(event));
+    std::shared_ptr<LogEventWrap> wrapper = std::make_shared<LogEventWrap>(event);
 }
 
 void testStreamLog()

@@ -56,7 +56,7 @@ Logger::Logger(const std::string &name) :
     m_name(name)
 {
     m_level = LogLevel::DEBUG;
-    m_formatter.reset(new LogFormatter("%d{%Y-%m-%d %H:%M:%S}%T%t%T%N%T%F%T[%p]%T[%c]%T%f:%l%T%m%n"));
+    m_formatter = std::make_shared<LogFormatter>("%d{%Y-%m-%d %H:%M:%S}%T%t%T%N%T%F%T[%p]%T[%c]%T%f:%l%T%m%n");
 }
 
 void Logger::addAppender(std::shared_ptr<LogAppender> appender)

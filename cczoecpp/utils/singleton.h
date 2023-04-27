@@ -1,5 +1,5 @@
-#ifndef __ZOE_SINGLETON_H__
-#define __ZOE_SINGLETON_H__
+#ifndef __CCZOE_SINGLETON_H__
+#define __CCZOE_SINGLETON_H__
 
 #include <memory>
 
@@ -9,7 +9,7 @@ template <class T>
 class Singleton
 {
 public:
-    static T *getInstance()
+    static T *GetInstance()
     {
         static T instance;
         return &instance;
@@ -20,9 +20,9 @@ template <class T>
 class SingletonPtr
 {
 public:
-    static std::shared_ptr<T> getInstance()
+    static std::shared_ptr<T> GetInstance()
     {
-        static std::shared_ptr<T> instancePtr(new T);
+        static std::shared_ptr<T> instancePtr = std::make_shared<T>();
         return instancePtr;
     }
 };

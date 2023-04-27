@@ -1,5 +1,5 @@
-#ifndef __ZOE_LOG_APPENDER_H__
-#define __ZOE_LOG_APPENDER_H__
+#ifndef __CCZOE_LOG_APPENDER_H__
+#define __CCZOE_LOG_APPENDER_H__
 
 #include <fstream>
 #include "Logger/logger.h"

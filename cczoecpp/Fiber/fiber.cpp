@@ -20,13 +20,14 @@ void Fiber::setThis(Fiber *fiber)
     t_fiber = fiber;
 }
 
-std::shared_ptr<Fiber> Fiber::getThis()
+std::shared_ptr<Fiber> Fiber::GetThis()
 {
     if (t_fiber)
     {
         return t_fiber->shared_from_this();
     }
     // create a main fiber
+    // TODO: cannot use std::make_shared<Fiber>()
     std::shared_ptr<Fiber> main_fiber(new Fiber);
     CCZOE_ASSERT(t_fiber == main_fiber.get());
     t_threadFiber = main_fiber;
@@ -141,9 +142,9 @@ void Fiber::resume()
     }
 }
 
-void Fiber::yieldToReady()
+void Fiber::YieldToReady()
 {
-    std::shared_ptr<Fiber> curr = getThis();
+    std::shared_ptr<Fiber> curr = GetThis();
     curr->yield();
 }
 
@@ -160,7 +161,7 @@ void Fiber::initMainFiber()
 
 void Fiber::mainFunc()
 {
-    std::shared_ptr<Fiber> curr = getThis();
+    std::shared_ptr<Fiber> curr = GetThis();
     curr->m_cb();
     curr->m_cb = nullptr;
     curr->m_state = TERM;

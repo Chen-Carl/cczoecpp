@@ -13,31 +13,32 @@ private:
     sockaddr_un m_addr;
     socklen_t m_addrLen;
 
-    virtual std::ostream& toString(std::ostream &os) const override;
-
 public:
     UnixAddress();
     UnixAddress(const std::string &path);
     virtual ~UnixAddress() { }
 
-    const sockaddr* getAddr() const override;
-    socklen_t getAddrLen() const override;
+    virtual const sockaddr* getAddr() const override;
+    virtual sockaddr* getAddr() override { return (sockaddr*)&m_addr; }
+    virtual socklen_t getAddrLen() const override;
+    virtual std::ostream& insert(std::ostream &os) const override;
+
+    virtual void setAddrLen(socklen_t len) { m_addrLen = len; }
 };
 
 class UnknownAddress : public Address
 {
 private:
-    sockaddr_storage m_addr;
-    socklen_t m_addrLen;
-
-    virtual std::ostream& toString(std::ostream &os) const override;
+    sockaddr m_addr;
 
 public:
     UnknownAddress(int family = AF_UNIX);
     virtual ~UnknownAddress() { }
 
-    const sockaddr* getAddr() const override;
-    socklen_t getAddrLen() const override;
+    virtual const sockaddr* getAddr() const override;
+    virtual sockaddr* getAddr() override  { return (sockaddr*)&m_addr; }
+    virtual socklen_t getAddrLen() const override;
+    virtual std::ostream& insert(std::ostream &os) const override;
 };
 
 }

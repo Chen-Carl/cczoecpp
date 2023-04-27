@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/home/cll/zoe/yaml-cpp/include",
+                "/home/cll/zoe/boost_1_80_0"
+            ],
+            "defines": [],
+            "compilerPath": "/home/cll/software/gcc-13.1.0/bin/g++",
+            "cStandard": "c17",
+            "cppStandard": "gnu++20",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}

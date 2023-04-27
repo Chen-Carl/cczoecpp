@@ -10,22 +10,23 @@ void test_fiber(int i)
 
 int main()
 {
-    fiber::Fiber::getThis();
-    Scheduler sc("test", 5);
-    for (int i = 0; i < 10; i++)
+    fiber::Fiber::GetThis();
+    Scheduler sc("test", 1);
+    for (int i = 0; i < 5; i++)
     {
-        std::shared_ptr<fiber::Fiber> f(new fiber::Fiber(std::bind(test_fiber, i)));
+        std::shared_ptr<fiber::Fiber> f = std::make_shared<fiber::Fiber>(std::bind(test_fiber, i));
         sc.schedule(f);
     }
+
     sc.start();
 
-    for (int i = 0; i < 10; i++)
-    {
-        std::shared_ptr<fiber::Fiber> f(new fiber::Fiber(std::bind(test_fiber, i + 10)));
-        sc.schedule(f);
-    }
+    // for (int i = 0; i < 100; i++)
+    // {
+    //     std::shared_ptr<fiber::Fiber> f = std::make_shared<fiber::Fiber>(std::bind(test_fiber, i + 100000));
+    //     sc.schedule(f);
+    // }
 
-    sc.stop();
+    // sc.stop();
 
     return 0;
 }

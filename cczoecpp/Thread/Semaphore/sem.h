@@ -1,5 +1,5 @@
-#ifndef __ZOE_SEMAPHORE_H__
-#define __ZOE_SEMAPHORE_H__
+#ifndef __CCZOE_SEMAPHORE_H__
+#define __CCZOE_SEMAPHORE_H__
 
 #include <pthread.h>
 #include <semaphore.h>
@@ -23,6 +23,7 @@ public:
     void notify();
 };
 
-}}
+}
+}
 
 #endif

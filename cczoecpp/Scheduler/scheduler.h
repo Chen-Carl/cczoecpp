@@ -1,3 +1,6 @@
+#ifndef __CCZOE_SCHEDULER_H__
+#define __CCZOE_SCHEDULER_H__
+
 #include <list>
 #include <atomic>
 #include "Thread/thread.h"
@@ -36,6 +39,11 @@ public:
     template <class Task>
     void schedule(Task task)
     {
+        // if (m_stopCommand)
+        // {
+        //     CCZOE_LOG_WARN(CCZOE_LOG_ROOT()) << "Schedule task failed, the scheduler is stopped.";
+        //     return;
+        // }
         ScheduleTask cbOrFiber(task);
         if (cbOrFiber.m_fiber)
         {
@@ -45,7 +53,7 @@ public:
         else if (cbOrFiber.m_cb)
         {
             thread::ScopedLock<MutexType> lock(m_mutex);
-            m_tasks.push_back(std::shared_ptr<fiber::Fiber>(new fiber::Fiber(cbOrFiber.m_cb)));
+            m_tasks.push_back(std::make_shared<fiber::Fiber>(cbOrFiber.m_cb));
         }
     }
 
@@ -69,7 +77,11 @@ protected:
     // idle thread
     std::atomic<size_t> m_idleThreadCount = {0};
 
+    void setThis();
+
     static Scheduler *GetThis();
 };
 
 }
+
+#endif

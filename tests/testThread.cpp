@@ -21,12 +21,14 @@ void testThread()
 {
     CCZOE_LOG_INFO(CCZOE_LOG_ROOT()) << "thread test begin";
     std::vector<std::shared_ptr<thread::Thread>> thrs;
-    for(int i = 0; i < 5; ++i) {
-        std::shared_ptr<thread::Thread> thr(new thread::Thread(&func1, "name_" + std::to_string(i)));
+    for(int i = 0; i < 5; i++) 
+    {
+        std::shared_ptr<thread::Thread> thr(new thread::Thread("name_" + std::to_string(i), func1));
         thrs.push_back(thr);
     }
 
-    for(size_t i = 0; i < thrs.size(); ++i) {
+    for(size_t i = 0; i < thrs.size(); ++i) 
+    {
         thrs[i]->join();
     }
     CCZOE_LOG_INFO(CCZOE_LOG_ROOT()) << "thread test end";
@@ -40,7 +42,8 @@ void func1()
                                      << " id: " << getThreadId()
                                      << " this.id: " << thread::Thread::GetThis()->getId();
 
-    for(int i = 0; i < 10000; ++i) {
+    for(int i = 0; i < 10000; ++i) 
+    {
         ++count;
     }
 }

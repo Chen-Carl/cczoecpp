@@ -1,5 +1,5 @@
-#ifndef __ZOE_LOGFORMATTER_H__
-#define __ZOE_LOGFORMATTER_H__
+#ifndef __CCZOE_LOGFORMATTER_H__
+#define __CCZOE_LOGFORMATTER_H__
 
 #include <iostream>
 #include <ctime>

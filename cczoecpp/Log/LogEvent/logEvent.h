@@ -1,5 +1,5 @@
-#ifndef __ZOE_LOG_EVENT_H__
-#define __ZOE_LOG_EVENT_H__
+#ifndef __CCZOE_LOG_EVENT_H__
+#define __CCZOE_LOG_EVENT_H__
 
 #include <string>
 #include <sstream>

@@ -3,6 +3,8 @@
 
 #include <memory>
 #include <string>
+#include <vector>
+#include <sys/uio.h>
 #include "endian.h"
 
 namespace cczoe {
@@ -100,6 +102,10 @@ public:
     void setLittleEndian() { m_endian = CCZOE_LITTLE_ENDIAN; }
     void setBigEndian() { m_endian = CCZOE_BIG_ENDIAN; }
     void setPosition(size_t pos);
+
+    // memory operations
+    uint64_t addWriteBuffers(std::vector<iovec> &buff, uint64_t len);
+    uint64_t addReadBuffers(std::vector<iovec> &buff, uint64_t len) const;
 
 private:
     size_t m_baseSize;      // size of memory block

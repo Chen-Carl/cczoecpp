@@ -1,8 +1,9 @@
 #include "scheduler.h"
+#include "Net/Hook/hook.h"
 
 namespace cczoe {
 
-static thread_local Scheduler *t_scheduer = nullptr;
+static thread_local Scheduler *t_scheduler = nullptr;
 
 Scheduler::ScheduleTask::ScheduleTask()
 {
@@ -25,12 +26,16 @@ Scheduler::ScheduleTask::ScheduleTask(std::function<void()> f, int thr)
 Scheduler::Scheduler(std::string name, size_t threadCount) : 
     m_name(name), m_threadCount(threadCount)
 {
-    t_scheduer = this;
+    t_scheduler = this;
 }
 
 Scheduler::~Scheduler()
 {
-
+    while (!m_stopCommand)
+    {
+        sleep(5);
+    }
+    stop();
 }
 
 void Scheduler::start()
@@ -38,15 +43,17 @@ void Scheduler::start()
     m_threads.resize(m_threadCount);
     for (size_t i = 0; i < m_threadCount; i++)
     {
-        m_threads[i].reset(new thread::Thread(std::bind(&Scheduler::run, this), m_name + "_" + std::to_string(i)));
+        m_threads[i] = std::make_shared<thread::Thread>(m_name + "_" + std::to_string(i), std::bind(&Scheduler::run, this));
     }
 }
 
 void Scheduler::run()
 {
-    fiber::Fiber::getThis();
+    fiber::Fiber::GetThis();
+    setThis();
+    setHookEnable(true);
     std::shared_ptr<fiber::Fiber> task;
-    std::shared_ptr<fiber::Fiber> idleFiber(new fiber::Fiber(std::bind(&Scheduler::idle, this)));
+    std::shared_ptr<fiber::Fiber> idleFiber = std::make_shared<fiber::Fiber>(std::bind(&Scheduler::idle, this));
     while (true)
     {
         task.reset();
@@ -56,7 +63,7 @@ void Scheduler::run()
             if (it != m_tasks.end())
             {
                 task = *it;
-                m_tasks.erase(it++);
+                it = m_tasks.erase(it);
             }
         }
         if (!task)
@@ -73,8 +80,15 @@ void Scheduler::run()
 
 void Scheduler::stop()
 {
-    while (!m_tasks.empty());
     m_stopCommand = true;
+    while (true)
+    {
+        thread::ScopedLock<MutexType> lock(m_mutex);
+        if (m_tasks.empty())
+        {
+            break;
+        }
+    }
     std::vector<std::shared_ptr<thread::Thread>> thrs;
     {
         thread::ScopedLock<MutexType> lock(m_mutex);
@@ -90,13 +104,19 @@ void Scheduler::idle()
 {
     while (!m_stopCommand)
     {
-        fiber::Fiber::getThis()->yield();
+        CCZOE_LOG_INFO(CCZOE_LOG_ROOT()) << "idle";
+        fiber::Fiber::GetThis()->yield();
     }
+}
+
+void Scheduler::setThis() 
+{
+    t_scheduler = this;
 }
 
 Scheduler *Scheduler::GetThis()
 {
-    return t_scheduer;
+    return t_scheduler;
 }
 
 }

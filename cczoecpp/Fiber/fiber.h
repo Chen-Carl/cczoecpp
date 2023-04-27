@@ -1,5 +1,5 @@
-#ifndef __ZOE_FIBER_H__
-#define __ZOE_FIBER_H__
+#ifndef __CCZOE_FIBER_H__
+#define __CCZOE_FIBER_H__
 
 #include <ucontext.h>
 #include <memory>
@@ -73,11 +73,11 @@ public:
      * @brief  
      */
     // get the running fiber
-    static std::shared_ptr<Fiber> getThis();
+    static std::shared_ptr<Fiber> GetThis();
     // the total number of fibers
     static uint64_t totalFibers();
 
-    static void yieldToReady();
+    static void YieldToReady();
 
     static void mainFunc();
     static void initMainFiber();
