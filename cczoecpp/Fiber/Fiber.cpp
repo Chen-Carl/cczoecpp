@@ -1,4 +1,4 @@
-#include "fiber.h"
+#include "Fiber/Fiber.h"
 
 namespace cczoe {
 namespace fiber {
@@ -13,7 +13,7 @@ static thread_local Fiber *t_fiber = nullptr;
 static thread_local std::shared_ptr<Fiber> t_threadFiber = nullptr;
 
 // fiber stack config, allocate 1M space
-static std::shared_ptr<config::ConfigVar<uint32_t>> g_fiber_stack_size(config::Config::lookup("fiber.stack_size", (uint32_t)(1024 * 1024), "fiber stack size"));
+static std::shared_ptr<config::ConfigVar<uint32_t>> g_fiber_stack_size(config::Config::Lookup("fiber.stack_size", (uint32_t)(1024 * 1024), "fiber stack size"));
 
 void Fiber::setThis(Fiber *fiber)
 {
@@ -132,6 +132,14 @@ void Fiber::resume()
 {
     if (t_fiber == t_threadFiber.get())
     {
+        if (m_state == RUNNING)
+        {
+            CCZOE_LOG_FATAL(CCZOE_LOG_ROOT()) << "resume running fiber";
+        }
+        else if (m_state == TERM)
+        {
+            CCZOE_LOG_FATAL(CCZOE_LOG_ROOT()) << "resume terminated fiber";
+        }
         CCZOE_ASSERT(m_state != TERM && m_state != RUNNING);
         setThis(this);
         m_state = RUNNING;

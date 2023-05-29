@@ -6,8 +6,8 @@
 #include <unordered_map>
 #include <memory>
 #include <functional>
-#include "lexicalCast.h"
-#include "log.h"
+#include "Config/LexicalCast.h"
+#include "Log/Log.h"
 
 namespace cczoe {
 namespace config {
@@ -120,7 +120,7 @@ class Config
 {
 private:
     static std::unordered_map<std::string, std::shared_ptr<ConfigVarBase>> s_datas;
-    static std::unordered_map<std::string, std::shared_ptr<ConfigVarBase>> &getDatas()
+    static std::unordered_map<std::string, std::shared_ptr<ConfigVarBase>> &GetDatas()
     {
         static std::unordered_map<std::string, std::shared_ptr<ConfigVarBase>> s_datas;
         return s_datas;
@@ -128,10 +128,10 @@ private:
 
 public:
     template <class T>
-    static std::shared_ptr<ConfigVar<T>> lookup(const std::string &name, const T &default_value, const std::string &description = "")
+    static std::shared_ptr<ConfigVar<T>> Lookup(const std::string &name, const T &default_value, const std::string &description = "")
     {
-        auto it = getDatas().find(name);
-        if (it != getDatas().end())
+        auto it = GetDatas().find(name);
+        if (it != GetDatas().end())
         {
             auto tmp = std::dynamic_pointer_cast<ConfigVar<T>>(it->second);
             if (tmp)
@@ -150,30 +150,30 @@ public:
         else
         {
             std::shared_ptr<ConfigVar<T>> createVar = std::make_shared<ConfigVar<T>>(name, default_value, description);
-            getDatas()[name] = createVar;
+            GetDatas()[name] = createVar;
             return createVar;
         }
         return nullptr;
     }
 
     template <class T>
-    static std::shared_ptr<ConfigVar<T>> lookup(const std::string &name)
+    static std::shared_ptr<ConfigVar<T>> Lookup(const std::string &name)
     {
-        auto it = getDatas().find(name);
-        if (it == getDatas().end())
+        auto it = GetDatas().find(name);
+        if (it == GetDatas().end())
             return nullptr;
         return std::dynamic_pointer_cast<ConfigVar<T>>(it->second);
     }
 
-    static std::shared_ptr<ConfigVarBase> lookupBase(const std::string &name)
+    static std::shared_ptr<ConfigVarBase> LookupBase(const std::string &name)
     {
-        auto it = getDatas().find(name);
-        return it == getDatas().end() ? nullptr : it->second;
+        auto it = GetDatas().find(name);
+        return it == GetDatas().end() ? nullptr : it->second;
     }
 
-    static void loadFromYaml(const YAML::Node &root);
-    static void loadFromFile(const std::string &filename);
-    static void parseNodes(const std::string &prefix, const YAML::Node &root, std::list<std::pair<std::string, YAML::Node>> &res);
+    static void LoadFromYaml(const YAML::Node &root);
+    static void LoadFromFile(const std::string &filename);
+    static void ParseNodes(const std::string &prefix, const YAML::Node &root, std::list<std::pair<std::string, YAML::Node>> &res);
 };
 
 }}

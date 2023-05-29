@@ -5,8 +5,8 @@
 #include <memory>
 #include <functional>
 #include <atomic>
-#include "Thread/thread.h"
-#include "Config/config.h"
+#include "Thread/Thread.h"
+#include "Config/Config.h"
 #include "Allocator/allocator.h"
 #include "utils/macro.h"
 

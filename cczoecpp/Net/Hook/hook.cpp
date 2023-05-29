@@ -3,7 +3,7 @@
 #include <stdarg.h>
 #include <sys/ioctl.h>
 #include "hook.h"
-#include "Fiber/fiber.h"
+#include "Fiber/Fiber.h"
 #include "Scheduler/iomanager.h"
 #include "Net/Hook/fdmanager.h"
 
@@ -98,10 +98,10 @@ unsigned int sleep(unsigned int seconds)
 
     std::shared_ptr<cczoe::fiber::Fiber> fiber = cczoe::fiber::Fiber::GetThis();
     cczoe::IOManager *iom = cczoe::IOManager::GetThis();
+    cczoe::fiber::Fiber::YieldToReady();
     iom->addTimer(seconds * 1000, [&](){
         iom->schedule(fiber);
     }, false);
-    cczoe::fiber::Fiber::YieldToReady();
     return 0;
 }
 

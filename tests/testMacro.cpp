@@ -1,7 +1,7 @@
 #include "utils/macro.h"
 #include "utils/debug.h"
-#include "log.h"
-#include "macro.h"
+#include "Log/Log.h"
+#include "utils/macro.h"
 
 void testAssert();
 

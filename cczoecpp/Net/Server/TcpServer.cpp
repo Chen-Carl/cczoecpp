@@ -1,12 +1,14 @@
 #include <format>
 #include "Net/Server/TcpServer.h"
-#include "Log/log.h"
+#include "Log/Log.h"
 #include "TcpServer.h"
 
 namespace cczoe {
 namespace net {
 
-TcpServer::TcpServer(IOManager *worker) : m_worker(worker)
+TcpServer::TcpServer(IOManager *worker, bool showLogs) : 
+    m_worker(worker),
+    m_showLogs(showLogs)
 {
 
 }
@@ -39,7 +41,10 @@ void TcpServer::accept(std::shared_ptr<Socket> sock)
 
 void TcpServer::handleClient(std::shared_ptr<Socket> client)
 {
-    CCZOE_LOG_INFO(CCZOE_LOG_ROOT()) << "handle client: " << *client;
+    if (m_showLogs)
+    {
+        CCZOE_LOG_INFO(CCZOE_LOG_ROOT()) << "handle client: " << *client;
+    }
 }
 
 bool TcpServer::bind(const std::shared_ptr<Address> addr)

@@ -13,88 +13,7 @@ bool isHookEnable();
 void setHookEnable(bool enable = true);
 void hookInit();
 
-// template <class OrigFun, class... Args>
-// static ssize_t do_io(int fd, OrigFun fun, const char *hookFun, uint32_t event, int soTimeout, Args&&... args)
-// {
-
-//     std::shared_ptr<FdCtx> ctx = FdMgr::GetInstance()->get(fd);
-//     if (ctx->isClosed())
-//     {
-//         // Bad file number
-//         errno = EBADF;
-//         return -1;
-//     }
-
-//     // non-socket or user sets nonblock
-//     // if user sets nonblock, the original function handles it in nonblock mode
-//     if (!ctx->isSocket() || ctx->isUserNonblock())
-//     {
-//         return fun(fd, std::forward<Args>(args)...);
-//     }
-
-//     while (true) 
-//     {
-//         ssize_t n = fun(fd, std::forward<Args>(args)...);
-//         std::shared_ptr<TimeInfo> timeInfo = std::make_shared<TimeInfo>();
-//         while (n == -1 && errno == EINTR)
-//         {
-//             n = fun(fd, std::forward<Args>(args)...);
-//         }
-
-//         if (n == -1 && errno == EAGAIN)
-//         {
-//             // add timer and yield
-//             uint64_t timeout = ctx->getTimeout(soTimeout);
-//             IOManager *iom = IOManager::GetThis();
-//             std::shared_ptr<Timer> timer = nullptr;
-//             if (timeout != std::numeric_limits<uint64_t>::max())
-//             {
-//                 std::weak_ptr<TimeInfo> cancell(timeInfo);
-//                 timer = iom->addTimer(timeout, [&]() { 
-//                     auto ob = cancell.lock();
-//                     if (ob && !ob->cancelled)
-//                     {
-//                         ob->cancelled = ETIMEDOUT;
-//                         iom->cancelEvent(fd, (IOManager::Event)(event));
-//                     }
-//                 }, cancell);
-//             }
-//             // there are 2 wakeup point:
-//             // 1. the fd is ready
-//             // 2. the timer is timeout
-            
-//             // the callback is set to default (nullptr) in addEvent
-//             // so the fiber will be added to ready list
-//             if (int rt = iom->addEvent(fd, (IOManager::Event)(event)); rt) 
-//             {
-//                 if (timer)
-//                 {
-//                     timer->cancel();
-//                 }
-//                 throw std::logic_error(std::format("{} addEvent({}, {}) error", hookFun, fd, event));
-//                 return -1;
-//             }
-//             fiber::Fiber::YieldToReady();
-//             if (timer)
-//             {
-//                 timer->cancel();
-//             }
-//             if (timeInfo->cancelled)
-//             {
-//                 errno = timeInfo->cancelled;
-//                 return -1;
-//             }
-//         }
-//         else
-//         {
-//             return n;
-//         }
-//     }
-//     return -1;
-// }
-
-
-template<typename OriginFun, typename... Args>
+template <typename OriginFun, typename... Args>
 static ssize_t do_io(int fd, OriginFun fun, const char* hookName, uint32_t event, int soTimeout, Args&&... args) 
 {
     struct TimeInfo
@@ -130,6 +49,7 @@ static ssize_t do_io(int fd, OriginFun fun, const char* hookName, uint32_t event
     std::shared_ptr<TimeInfo> timeInfo = std::make_shared<TimeInfo>();
 
 retry:
+    // TODO: Broken pipe
     ssize_t n = fun(fd, std::forward<Args>(args)...);
     while (n == -1 && errno == EINTR) 
     {
@@ -142,7 +62,8 @@ retry:
         std::weak_ptr<TimeInfo> cancel(timeInfo);
         if (timeout != std::numeric_limits<uint64_t>::max()) 
         {
-            timer = iom->addTimer(timeout, [=]() {
+            // TODO: [=] or [&] will trigger a segmentation fault
+            timer = iom->addTimer(timeout, [cancel, fd, iom, event]() {
                 auto t = cancel.lock();
                 if (t && !t->cancelled) 
                 {

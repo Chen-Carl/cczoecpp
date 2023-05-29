@@ -43,6 +43,7 @@ public:
             if (m_type == 1)
             {
                 CCZOE_LOG_INFO(CCZOE_LOG_ROOT()) << "recv: " << ba->toString().substr(0, rt);
+                client->send(ba->toString().substr(0, rt).c_str(), strlen(ba->toString().substr(0, rt).c_str()));
             }
             else
             {
@@ -58,7 +59,9 @@ int main(int argc, char *argv[])
 {
     if (argc < 3)
     {
-        CCZOE_LOG_ERROR(CCZOE_LOG_ROOT()) << "usage: " << argv[0] << " ip port";
+        std::cout << "usage: " << argv[0] << " IP PORT" << std::endl;
+        std::cout << "where IP is the listening ip address" << std::endl;
+        std::cout << "where PORT is the listening port" << std::endl;
         return 0;
     }
     std::string ip = argv[1];

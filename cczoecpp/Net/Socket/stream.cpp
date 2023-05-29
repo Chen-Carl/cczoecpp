@@ -28,17 +28,16 @@ int Stream::readFixSize(std::shared_ptr<ByteArray> barray, size_t length)
     {
         return 0;
     }
-    size_t offset = 0;
-    while (offset < length)
+    while (length > 0)
     {
-        int rt = read(barray, length - offset);
+        int rt = read(barray, length);
         if (rt <= 0)
         {
             return rt;
         }
-        offset += rt;
+        length -= rt;
     }
-    return offset;
+    return length;
 }
 
 int Stream::writeFixSize(const void *buffer, size_t length)
@@ -66,17 +65,16 @@ int Stream::writeFixSize(std::shared_ptr<ByteArray> barray, size_t length)
     {
         return 0;
     }
-    size_t offset = 0;
-    while (offset < length)
+    while (length > 0)
     {
-        int rt = write(barray, length - offset);
+        int rt = write(barray, length);
         if (rt <= 0)
         {
             return rt;
         }
-        offset += rt;
+        length -= rt;
     }
-    return offset;
+    return length;
 }
 
 }}

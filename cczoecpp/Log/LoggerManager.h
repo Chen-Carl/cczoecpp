@@ -3,8 +3,8 @@
 
 #include <map>
 #include <memory>
-#include "Logger/logger.h"
-#include "singleton.h"
+#include "Log/Logger.h"
+#include "utils/singleton.h"
 #include "Thread/Mutex/mutex.h"
 
 

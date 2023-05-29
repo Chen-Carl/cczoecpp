@@ -20,6 +20,8 @@ public:
     virtual int write(std::shared_ptr<ByteArray> barray, size_t length) = 0;
     virtual int writeFixSize(const void *buffer, size_t length);
     virtual int writeFixSize(std::shared_ptr<ByteArray> barray, size_t length);
+
+    virtual int close() = 0;
 };
 
 }

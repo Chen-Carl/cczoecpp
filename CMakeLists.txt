@@ -13,25 +13,18 @@ include_directories(.)
 include_directories(./tests)
 include_directories(./cczoecpp)
 include_directories(./cczoecpp/tests)
-include_directories(./cczoecpp/Log)
-include_directories(./cczoecpp/Config)
-include_directories(./cczoecpp/Thread)
-include_directories(./cczoecpp/Fiber)
-include_directories(./cczoecpp/Scheduler)
-include_directories(./cczoecpp/Net)
-include_directories(./cczoecpp/utils)
 
 set(LIB_SRC
-    cczoecpp/Log/LogAppender/logAppender.cpp
-    cczoecpp/Log/LogEvent/logEvent.cpp
-    cczoecpp/Log/Logger/logger.cpp
-    cczoecpp/Log/LogFormatter/logFormatter.cpp
-    cczoecpp/Log/LoggerManager/loggerManager.cpp
-    cczoecpp/Config/config.cpp
+    cczoecpp/Log/LogAppender.cpp
+    cczoecpp/Log/LogEvent.cpp
+    cczoecpp/Log/Logger.cpp
+    cczoecpp/Log/LogFormatter.cpp
+    cczoecpp/Log/LoggerManager.cpp
+    cczoecpp/Config/Config.cpp
     cczoecpp/Thread/Semaphore/sem.cpp
     cczoecpp/Thread/Mutex/mutex.cpp
-    cczoecpp/Thread/thread.cpp
-    cczoecpp/Fiber/fiber.cpp
+    cczoecpp/Thread/Thread.cpp
+    cczoecpp/Fiber/Fiber.cpp
     cczoecpp/Scheduler/scheduler.cpp
     cczoecpp/Scheduler/iomanager.cpp
     cczoecpp/Timer/timer.cpp
@@ -44,7 +37,14 @@ set(LIB_SRC
     cczoecpp/Net/Address/UnixAddress/unixAddress.cpp
     cczoecpp/Net/Socket/socket.cpp
     cczoecpp/Net/Socket/stream.cpp
+    cczoecpp/Net/Socket/socketStream.cpp
     cczoecpp/Net/Server/TcpServer.cpp
+    cczoecpp/Net/Server/HttpServer.cpp
+    cczoecpp/Net/Server/servlet.cpp
+    cczoecpp/Net/Http/http.cpp
+    cczoecpp/Net/Http/HttpParser.cpp
+    cczoecpp/Net/Http/HttpSession.cpp
+    cczoecpp/Net/Http/parser/http_parser.cpp
     cczoecpp/utils/getInfo.cpp
     cczoecpp/utils/debug.cpp
 )
@@ -119,6 +119,14 @@ add_executable(testTcpServer tests/testTcpServer.cpp)
 add_dependencies(testTcpServer cczoecpp)
 target_link_libraries(testTcpServer ${LIBS})
 
+add_executable(testHttpParser tests/testHttpParser.cpp)
+add_dependencies(testHttpParser cczoecpp)
+target_link_libraries(testHttpParser ${LIBS})
+
+add_executable(testHttpServer tests/testHttpServer.cpp)
+add_dependencies(testHttpServer cczoecpp)
+target_link_libraries(testHttpServer ${LIBS})
+
 add_executable(echoServer examples/echoServer.cpp)
 add_dependencies(echoServer cczoecpp)
 target_link_libraries(echoServer ${LIBS})
@@ -126,6 +134,14 @@ target_link_libraries(echoServer ${LIBS})
 add_executable(tcpClient examples/tcpClient.cpp)
 add_dependencies(tcpClient cczoecpp)
 target_link_libraries(tcpClient ${LIBS})
+
+add_executable(helloServer examples/helloServer.cpp)
+add_dependencies(helloServer cczoecpp)
+target_link_libraries(helloServer ${LIBS})
+
+add_executable(ovsTcpClient evaluation/ovsTcpClient.cpp)
+add_dependencies(ovsTcpClient cczoecpp)
+target_link_libraries(ovsTcpClient ${LIBS})
 
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)

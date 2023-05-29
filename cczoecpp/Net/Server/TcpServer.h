@@ -20,10 +20,11 @@ private:
     std::vector<std::shared_ptr<Socket>> m_socks;
 
     void accept(std::shared_ptr<Socket> sock);
-    virtual void handleClient(std::shared_ptr<Socket> client);
+
+    bool m_showLogs = false;
 
 public:
-    TcpServer(IOManager *worker = IOManager::GetThis());
+    TcpServer(IOManager *worker = IOManager::GetThis(), bool showLogs = false);
     virtual ~TcpServer();
 
     virtual bool bind(const std::shared_ptr<Address> addr);
@@ -37,6 +38,9 @@ public:
 
     void setName(const std::string &name) { m_name = name; }
     void setReadTimeout(uint64_t timeout) { m_readTimeout = timeout; }
+
+protected:
+    virtual void handleClient(std::shared_ptr<Socket> client);
 };
 
 }

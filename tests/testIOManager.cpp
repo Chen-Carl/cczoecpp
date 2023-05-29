@@ -3,7 +3,7 @@
 #include <arpa/inet.h>
 #include <fcntl.h>
 #include "Scheduler/iomanager.h"
-#include "Log/log.h"
+#include "Log/Log.h"
 #include "Net/Hook/hook.h"
 
 using namespace cczoe;
@@ -15,7 +15,7 @@ void do_write(int sockfd);
 
 int main()
 {
-    IOManager iom("testIOManager", 1);
+    IOManager iom("testIOManager", 100);
     iom.schedule(fiberFunc);
     testScheduler();
     return 0;
@@ -50,9 +50,9 @@ void fiberFunc()
 void do_read(int sockfd)
 {
     CCZOE_LOG_INFO(CCZOE_LOG_ROOT()) << "read callback";
-    char buf[2049]; // 修改数组长度为2049
+    char buf[2049];
     memset(buf, 0, sizeof(buf));
-    int rt = recv(sockfd, buf, sizeof(buf) - 1, 0); // 接收数据时只接收2048个字节
+    int rt = recv(sockfd, buf, sizeof(buf) - 1, 0);
     if (rt < 0)
     {
         CCZOE_LOG_INFO(CCZOE_LOG_ROOT()) << "read fail";

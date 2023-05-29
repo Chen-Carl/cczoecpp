@@ -3,9 +3,9 @@
 
 #include <list>
 #include <atomic>
-#include "Thread/thread.h"
+#include "Thread/Thread.h"
 #include "Thread/Mutex/mutex.h"
-#include "Fiber/fiber.h"
+#include "Fiber/Fiber.h"
 
 namespace cczoe {
 
@@ -47,6 +47,14 @@ public:
         ScheduleTask cbOrFiber(task);
         if (cbOrFiber.m_fiber)
         {
+            if (cbOrFiber.m_fiber->getState() == fiber::Fiber::State::RUNNING)
+            {
+                CCZOE_LOG_WARN(CCZOE_LOG_ROOT()) << "Schedule task may fail, the fiber is running.";
+            }
+            if (cbOrFiber.m_fiber->getState() == fiber::Fiber::State::RUNNING)
+            {
+                CCZOE_LOG_ERROR(CCZOE_LOG_ROOT()) << "Schedule task failed, the fiber is still running.";
+            }
             thread::ScopedLock<MutexType> lock(m_mutex);
             m_tasks.push_back(cbOrFiber.m_fiber);
         }

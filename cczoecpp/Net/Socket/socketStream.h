@@ -23,6 +23,9 @@ public:
     virtual int write(std::shared_ptr<ByteArray> barray, size_t length) override;
 
     std::shared_ptr<Socket> getSocket() const { return m_sock; }
+
+    // TODO: return value
+    virtual int close() override { return m_sock->close(); }
 };
 
 }}

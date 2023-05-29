@@ -3,12 +3,11 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 
-#include "Socket/socket.h"
+#include "Net/Socket/socket.h"
 #include "Net/Hook/fdmanager.h"
 #include "Net/Hook/hook.h"
 #include "Net/Address/sockaddr.h"
 #include "Net/Socket/socket.h"
-#include "socket.h"
 
 namespace cczoe {
 namespace net {
@@ -327,7 +326,7 @@ int Socket::send(const void *buf, size_t len, int flags)
     {
         return ::send(m_sock, buf, len, flags);
     }
-    return -1;    
+    return -1;
 }
 
 int Socket::send(iovec *buf, size_t len, int flags)

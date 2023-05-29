@@ -34,4 +34,25 @@ int SocketStream::read(std::shared_ptr<ByteArray> barray, size_t length)
     return m_sock->recv(&iovs[0], iovs.size());
 }
 
-}}
+int SocketStream::write(const void *buffer, size_t length)
+{
+    if (!m_sock || !m_sock->isConnected())
+    {
+        return -1;
+    }
+    return m_sock->send(buffer, length);
+}
+
+int SocketStream::write(std::shared_ptr<ByteArray> barray, size_t length)
+{
+    if (!m_sock || !m_sock->isConnected())
+    {
+        return -1;
+    }
+    std::vector<iovec> iovs;
+    barray->addReadBuffers(iovs, length);
+    return m_sock->send(&iovs[0], iovs.size());
+}
+
+}
+}

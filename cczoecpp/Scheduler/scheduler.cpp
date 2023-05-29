@@ -1,3 +1,4 @@
+#include <dlfcn.h>
 #include "scheduler.h"
 #include "Net/Hook/hook.h"
 
@@ -33,7 +34,8 @@ Scheduler::~Scheduler()
 {
     while (!m_stopCommand)
     {
-        sleep(5);
+        auto sleepFunc = reinterpret_cast<void (*)(unsigned int)>(dlsym(RTLD_NEXT, "sleep"));
+        sleepFunc(5);
     }
     stop();
 }
@@ -51,7 +53,7 @@ void Scheduler::run()
 {
     fiber::Fiber::GetThis();
     setThis();
-    setHookEnable(true);
+    // setHookEnable(true);
     std::shared_ptr<fiber::Fiber> task;
     std::shared_ptr<fiber::Fiber> idleFiber = std::make_shared<fiber::Fiber>(std::bind(&Scheduler::idle, this));
     while (true)

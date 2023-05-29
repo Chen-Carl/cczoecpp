@@ -1,8 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <memory>
-#include "Thread/thread.h"
-#include "Log/log.h"
+#include "Thread/Thread.h"
+#include "Log/Log.h"
 
 using namespace cczoe;
 

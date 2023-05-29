@@ -4,7 +4,7 @@
 #include <iostream>
 #include <ctime>
 #include <vector>
-#include "LogEvent/logEvent.h"
+#include "Log/LogEvent.h"
 
 namespace cczoe {
 namespace logcpp {

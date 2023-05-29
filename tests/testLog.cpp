@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../cczoecpp/Log/log.h"
+#include "Log/Log.h"
 
 using namespace cczoe;
 using namespace cczoe::logcpp;

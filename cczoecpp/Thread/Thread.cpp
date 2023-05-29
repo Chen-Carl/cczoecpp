@@ -1,6 +1,6 @@
-#include "Thread/thread.h"
+#include "Thread/Thread.h"
 #include "utils/getInfo.h"
-#include "Log/log.h"
+#include "Log/Log.h"
 
 namespace cczoe {
 namespace thread {

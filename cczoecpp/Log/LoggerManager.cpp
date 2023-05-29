@@ -1,5 +1,5 @@
-#include "loggerManager.h"
-#include "LogAppender/logAppender.h"
+#include "Log/LoggerManager.h"
+#include "Log/LogAppender.h"
 
 namespace cczoe {
 namespace logcpp {

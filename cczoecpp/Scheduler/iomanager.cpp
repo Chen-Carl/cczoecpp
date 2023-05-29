@@ -65,11 +65,14 @@ IOManager::IOManager(std::string name, size_t threadCount) :
     start();
 }
 
+#include <dlfcn.h>
+
 IOManager::~IOManager()
 {
     while (!m_stopCommand)
     {
-        sleep(5);
+        auto sleepFunc = reinterpret_cast<void (*)(unsigned int)>(dlsym(RTLD_NEXT, "sleep"));
+        sleepFunc(5);
     }
     for (size_t i = 0; i < m_threadCount; i++)
     {

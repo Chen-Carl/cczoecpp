@@ -1,4 +1,4 @@
-#include "Net/Server/TcpServer.h"
+#include "Net/Server/HttpServer.h"
 #include "Net/Address/sockaddr.h"
 
 using namespace cczoe;
@@ -7,7 +7,7 @@ void run();
 
 int main()
 {
-    IOManager iom("test_tcpServer", 2);
+    IOManager iom("test_httpServer", 2);
     iom.schedule(run);
     return 0;
 }
@@ -18,12 +18,11 @@ void run()
     if (addrs.has_value())
     {
         std::shared_ptr<net::IPAddress> addr = addrs.value().front();
-        std::shared_ptr<net::TcpServer> server = std::make_shared<net::TcpServer>(IOManager::GetThis());
+        std::shared_ptr<net::HttpServer> server = std::make_shared<net::HttpServer>(IOManager::GetThis());
         while (!server->bind(addr))
         {
             sleep(2);
         }
-        // server->bind(addr);
         server->start();
     }
     else

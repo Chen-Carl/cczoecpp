@@ -59,7 +59,7 @@ template <class T = Mutex>
 class ScopedLock
 {
 private:
-    bool m_locked;
+    bool m_locked = false;
     T &m_mutex;
 
 public:

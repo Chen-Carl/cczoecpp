@@ -3,8 +3,8 @@
 #include <string>
 #include <memory>
 #include <sstream>
-#include "Config/config.h"
-#include "Config/lexicalCast.h"
+#include "Config/Config.h"
+#include "Config/LexicalCast.h"
 
 using namespace cczoe;
 
@@ -100,17 +100,17 @@ void testConfig()
     using config::Config;
 
     // the next line will intrigue a config change event
-    std::shared_ptr<ConfigVar<int>> int_config(Config::lookup("system.port", (int)8080, "system port"));
+    std::shared_ptr<ConfigVar<int>> int_config(Config::Lookup("system.port", (int)8080, "system port"));
 
     int_config->addListener(0x1f1f1f, [](const int &old_value, const int &new_value){
         CCZOE_LOG_INFO(CCZOE_LOG_ROOT()) << "int config changed from " << old_value << " to " << new_value;
     });
 
     // the next line will not intrigue a config change event
-    std::shared_ptr<ConfigVar<float>> float_config(Config::lookup("system.value", (float)10.2, "system value"));
+    std::shared_ptr<ConfigVar<float>> float_config(Config::Lookup("system.value", (float)10.2, "system value"));
 
     // the next line will intrigue a config change event
-    std::shared_ptr<config::ConfigVar<std::vector<int>>> int_vec_config(Config::lookup("system.int_vec", std::vector<int>{1, 2}, "system int vector"));
+    std::shared_ptr<config::ConfigVar<std::vector<int>>> int_vec_config(Config::Lookup("system.int_vec", std::vector<int>{1, 2}, "system int vector"));
 
     int_vec_config->addListener(0x2f2f2f, [](const std::vector<int> &old_value, const std::vector<int> &new_value){
         std::stringstream from;
@@ -133,31 +133,35 @@ void testConfig()
     });
 
     // the next line will not intrigue a config change event
-    std::shared_ptr<ConfigVar<std::list<int>>> int_list_config(Config::lookup("system.int_list", std::list<int>{1, 2}, "system int vector"));
+    std::shared_ptr<ConfigVar<std::list<int>>> int_list_config(Config::Lookup("system.int_list", std::list<int>{1, 2}, "system int vector"));
 
     // the next line will not intrigue a config change event
-    std::shared_ptr<ConfigVar<std::set<int>>> int_set_config(Config::lookup("system.int_set", std::set<int>{1, 2}, "system int set"));
+    std::shared_ptr<ConfigVar<std::set<int>>> int_set_config(Config::Lookup("system.int_set", std::set<int>{1, 2}, "system int set"));
 
     // the next line will not intrigue a config change event
-    std::shared_ptr<ConfigVar<std::unordered_set<int>>> int_uset_config(Config::lookup("system.int_uset", std::unordered_set<int>{1, 2}, "system int uset"));
+    std::shared_ptr<ConfigVar<std::unordered_set<int>>> int_uset_config(Config::Lookup("system.int_uset", std::unordered_set<int>{1, 2}, "system int uset"));
 
     // the next line will not intrigue a config change event
-    std::shared_ptr<ConfigVar<std::map<std::string, int>>> str_int_map_config(Config::lookup("system.str_int_map", std::map<std::string, int>{{"k", 2}}, "system str int map"));
+    std::shared_ptr<ConfigVar<std::map<std::string, int>>> str_int_map_config(Config::Lookup("system.str_int_map", std::map<std::string, int>{{"k", 2}}, "system str int map"));
 
     // the next line will output a error log
-    std::shared_ptr<ConfigVar<std::vector<int>>> int_vector_config2(Config::lookup("system.int_list", std::vector<int>{1, 2}, "system int vector"));
+    std::shared_ptr<ConfigVar<std::vector<int>>> int_vector_config2(Config::Lookup("system.int_list", std::vector<int>{1, 2}, "system int vector"));
 
-    Config::loadFromFile("../tests/testYamlFile.yml");
+    Config::LoadFromFile("tests/testYamlFile.yml");
 
 }
 
 void testYamlFile()
 {
-    YAML::Node node = YAML::LoadFile("../tests/testConfig.yml");
+    YAML::Node node = YAML::LoadFile("tests/testConfig.yml");
     std::list<std::pair<std::string, YAML::Node>> output;
-    config::Config::parseNodes("", node, output);
+    config::Config::ParseNodes("", node, output);
     for (auto &i : output)
     {
         std::cout << i.first << ": " << i.second << std::endl;
     }
+
+    config::Config::LoadFromFile("tests/testConfig.yml");
+    std::string port = config::Config::Lookup<std::string>("system.port")->getValue();
+    std::cout << "port = " << port << std::endl;
 }

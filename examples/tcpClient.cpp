@@ -1,5 +1,7 @@
+#include <format>
 #include "Net/Socket/socket.h"
 #include "Net/Address/sockaddr.h"
+#include "Net/Socket/socketStream.h"
 
 using namespace cczoe;
 
@@ -11,7 +13,7 @@ private:
     std::shared_ptr<net::Socket> m_sock;
 
 public:
-    TcpClient(const std::shared_ptr<net::Address> remote, const std::shared_ptr<net::Address> local = nullptr) : 
+    TcpClient(const std::shared_ptr<net::Address> remote, const std::shared_ptr<net::Address> local) : 
         m_localAddr(local),
         m_remoteAddr(remote)
     {
@@ -43,15 +45,15 @@ int main(int argc, char *argv[])
 {
     if (argc < 3)
     {
-        std::cout << "usage: " << argv[0] << " IP PORT [-l] [ip[:port]] [-c] [size]" << std::endl;
-        std::cout << "where IP is the server ip address" << std::endl;
-        std::cout << "where PORT is the server port" << std::endl;
-        std::cout << "-l [ip[:port]] identify the local ip address and port" << std::endl;
-        std::cout << "-c [size] send size bytes data to server" << std::endl;
+        std::cout << "usage: " << argv[0] << " IP PORT [-l ip[:port]] [-c] [size]" << std::endl;
+        std::cout << "  where IP is the server ip address" << std::endl;
+        std::cout << "  where PORT is the server port" << std::endl;
+        std::cout << "[-l ip[:port]] identify the local ip address and port" << std::endl;
+        std::cout << "[-c size] send size bytes data to server" << std::endl;
         return 0;
     }
 
-    std::string localIp;
+    std::string localIp = "127.0.0.1";
     uint16_t localPort = 0;
     size_t size = 10;
 
